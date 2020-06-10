@@ -4,58 +4,65 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 import '../constants.dart';
-import '../data/subtitles.dart';
-import '../utils/sublist_process.dart';
+import '../models/subtitles.dart';
+import '../utils/sort_list.dart';
 import '../utils/hash.dart';
 
-class OpenSubs {
-  static final _apiUrl = 'https://rest.opensubtitles.org/search/';
-  static final _UA = OpenSubUA;
-  static final _sublang = 'eng';
+class OpenSubtitlesService {
+  static final _uaHeader = {'X-User-Agent': OpenSubUA};
+  static const _subLang =
+      'eng'; // Change this to obtain subtitles in other languages
+  static const _apiPrefix =
+      'https://rest.opensubtitles.org/search/sublanguageid-$_subLang';
 
-  static Future<Map<String, String>> _getFileInfo(File file) async {
-    var hash = await OpenSubtitlesHasher.computeFileHash(file);
-    var size = await file.length();
-    return {
-      "hash": hash,
-      "size": size.toString(),
-    };
+  // This function returns a map of hash and size of the file
+  static Future<Map<String, String>> _getFileHash(File file) async => {
+        'hash': await OpenSubtitlesHasher.computeFileHash(file),
+        'size': (await file.length()).toString(),
+        // 'hash': '319b23c54e9cf314',
+        // 'size': '750005572'
+      };
+
+  // Returns the list of URIs to fetch data
+  static Future<List<String>> _getApiUri(File file, [String title]) async {
+    List<String> uris = [];
+
+    final fileHash = await _getFileHash(file);
+    uris.add(
+        '$_apiPrefix/moviebytesize-${fileHash['size']}/moviehash-${fileHash['hash']}/');
+
+    if (title != null && title != '')
+      uris.add('$_apiPrefix/query-${Uri.encodeComponent(title)}');
+
+    return uris;
   }
 
-  static String _generateURIFromFile(String hash, String size) =>
-      '${_apiUrl}moviebytesize-$size/moviehash-$hash/sublanguageid-$_sublang/';
-  static String _generateURIFromID({String imdbID}) =>
-      '${_apiUrl}imdbid-$imdbID/sublanguageid-$_sublang/';
+  // Fetching the subtitles
+  static Future<List<Subtitle>> fetch(File file, [String title]) async {
+    List<Subtitle> subList = [];
+    List<String> fetchedIDs = [];
 
-  static Future<List<Subtitle>> fetchByFile({File file}) async {
-    final fileInfo = await _getFileInfo(file);
-    var _uri =
-        _generateURIFromFile(fileInfo['hash'], fileInfo['size']);
-    return await _getSubList(_uri);
-  }
+    for (String uri in (await _getApiUri(file, title))) {
+      var response = await http.get(uri, headers: _uaHeader);
 
-  static Future<List<Subtitle>> fetchByID({File file, String imdbID}) async {
-    final fileInfo = await _getFileInfo(file);
-    var _uri =
-        _generateURIFromFile(fileInfo['hash'], fileInfo['size']);
-    var list1 = await _getSubList(_uri);
-    _uri = _generateURIFromID(imdbID: imdbID);
-    var list2 = await _getSubList(_uri);
-    return joinLists(list1, list2);
-  }
-
-  static Future<List<Subtitle>> _getSubList(String _uri) async {
-    var response = await http
-        .get(_uri, headers: {'X-User-Agent': _UA});
-    if (response.statusCode != 200) {
-      return [];
-    } else {
-      List<dynamic> subtitles = await jsonDecode(response.body);
-      var subList = subtitles.map((subtitle) {
-        return Subtitle.fromAPI(subtitle);
-      }).toList();
-      sortList(subList);
-      return subList;
+      if (response.statusCode == 200) {
+        (await jsonDecode(response.body) as List<dynamic>).forEach((subtitle) {
+          if (!fetchedIDs.contains(subtitle['IDSubtitleFile'])) {
+            // Add subtitle id to a list to prevent duplicates
+            fetchedIDs.add(subtitle['IDSubtitleFile']);
+            subList.add(Subtitle.fromAPI(subtitle));
+          }
+        });
+      } else {
+        throw new FormatException('Failed to contact Opensubtitles.org');
+      }
     }
+
+    sortList(subList);
+    return subList;
   }
+}
+
+main(List<String> args) {
+  OpenSubtitlesService.fetch(null, 'Shadowhunters S02E20');
 }

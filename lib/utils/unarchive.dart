@@ -6,7 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../data/subtitles.dart';
+import '../models/subtitles.dart';
 
 Future<String> downloadFile(String url) async {
   Directory tempDir = await getTemporaryDirectory();

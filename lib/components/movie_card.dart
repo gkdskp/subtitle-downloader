@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:subtitle_downloader/data/movie.dart';
+import 'package:subtitle_downloader/models/movie.dart';
 
 class MovieCard extends StatelessWidget {
   final Movie movie;
@@ -18,7 +18,7 @@ class MovieCard extends StatelessWidget {
             children: [
               Container(
                   child: Image.network(
-                    (movie.poster != null) ? movie.poster: null,
+                    movie.posterUrl,
                   ),
                   width: 100),
               Expanded(

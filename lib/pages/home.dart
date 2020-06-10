@@ -48,14 +48,10 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     } else {
-      Navigator.push(
+     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => MovieList(
-              title: title,
-              season: season,
-              episode: episode,
-              handlePress: _setID),
+          builder: (context) => SubtitlesPage(file: _selectedFile),
         ),
       );
     }

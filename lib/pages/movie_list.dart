@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:subtitle_downloader/services/tmdb.dart';
 
 import '../components/movie_card.dart';
-import '../data/movie.dart';
+import '../models/movie.dart';
 import '../services/omdb.dart';
 
 class MovieList extends StatefulWidget {
@@ -33,10 +34,10 @@ class _MovieListState extends State<MovieList> {
       _isLoading = true;
     });
     if (widget.season != null && widget.episode != null)
-      movieList = await OMDBAApi.getEpisode(
-          widget.title, widget.season, widget.episode);
-    else
-      movieList = await OMDBAApi.getMovies(widget.title);
+    //   movieList = await TMDBAPi.getMovieList(
+    //       widget.title, season: widget.season, episode: widget.episode);
+    // else
+    //   movieList = await TMDBAPi.getMovieList(widget.title);
     setState(() {
       _movieList = movieList;
       _isLoading = false;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../data/subtitles.dart';
+import '../models/subtitles.dart';
 
 class SubtitleTile extends StatelessWidget {
   final Subtitle _subtitle;

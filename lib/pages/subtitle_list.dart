@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import '../components/subtitle_tile.dart';
-import '../data/subtitles.dart';
+import '../models/subtitles.dart';
 import '../utils/unarchive.dart';
 import '../services/opensub.dart';
 
@@ -33,13 +33,13 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
     setState(() {
       _isLoading = true;
     });
-    OpenSubs.fetchByID(file: widget.file, imdbID: widget.imdbID)
-        .then((subtitleList) {
-      setState(() {
-        subtitles = subtitleList;
-        _isLoading = false;
-      });
-    });
+    // OpenSubs.fetch(file: widget.file, imdbID: widget.imdbID)
+    //     .then((subtitleList) {
+    //   setState(() {
+    //     subtitles = subtitleList;
+    //     _isLoading = false;
+    //   });
+    // });
   }
 
   void _downloadSub(Subtitle subtitle) async {
