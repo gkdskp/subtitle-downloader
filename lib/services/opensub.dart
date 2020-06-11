@@ -17,10 +17,10 @@ class OpenSubtitlesService {
 
   // This function returns a map of hash and size of the file
   static Future<Map<String, String>> _getFileHash(File file) async => {
-        'hash': await OpenSubtitlesHasher.computeFileHash(file),
-        'size': (await file.length()).toString(),
-        // 'hash': '319b23c54e9cf314',
-        // 'size': '750005572'
+        // 'hash': await OpenSubtitlesHasher.computeFileHash(file),
+        // 'size': (await file.length()).toString(),
+        'hash': '319b23c54e9cf314',
+        'size': '750005572'
       };
 
   // Returns the list of URIs to fetch data
@@ -29,7 +29,8 @@ class OpenSubtitlesService {
 
     final fileHash = await _getFileHash(file);
     uris.add(
-        '$_apiPrefix/moviebytesize-${fileHash['size']}/moviehash-${fileHash['hash']}/');
+      '$_apiPrefix/moviebytesize-${fileHash['size']}/moviehash-${fileHash['hash']}/'
+    );
 
     if (title != null && title != '')
       uris.add('$_apiPrefix/query-${Uri.encodeComponent(title)}');
@@ -61,8 +62,4 @@ class OpenSubtitlesService {
     sortList(subList);
     return subList;
   }
-}
-
-main(List<String> args) {
-  OpenSubtitlesService.fetch(null, 'Shadowhunters S02E20');
 }

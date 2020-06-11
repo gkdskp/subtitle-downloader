@@ -18,13 +18,6 @@ class _HomePageState extends State<HomePage> {
   File _selectedFile;
   String id;
 
-  void _selectFile() async {
-    File file = await FilePicker.getFile();
-    setState(() {
-      _selectedFile = file;
-    });
-  }
-
   void _setID(String id) {
     this.id = id;
     Navigator.pop(context);
@@ -66,7 +59,7 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            BrowseForm(_selectedFile, _selectFile),
+            BrowseForm(),
             SizedBox(height: 30),
             SearchForm(_search),
           ],
