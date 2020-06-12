@@ -7,8 +7,6 @@ import 'package:subtitle_downloader/blocs/select_file.dart';
 class BrowseForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final SelectFileBloc _selectFileBloc = context.bloc<SelectFileBloc>();
-
     return Padding(
       padding: EdgeInsets.only(top: 20),
       child: Column(
@@ -20,19 +18,19 @@ class BrowseForm extends StatelessWidget {
           SizedBox(height: 10),
           RaisedButton(
             child: Text('Browse'),
-            onPressed: () => _selectFileBloc.add(SelectFileEvent.select),
+            padding: EdgeInsets.fromLTRB(50, 8, 50, 8),
+            onPressed: () => BlocProvider.of<SelectFileBloc>(context)
+                .add(SelectFileEvent.select),
             color: Theme.of(context).accentColor,
           ),
-          BlocBuilder<SelectFileBloc, File>(
-            builder: (context, file) {
-              return Text(
-                (file != null)
-                    ? basename(file.path)
-                    : 'No files selected',
-                style: Theme.of(context).textTheme.bodyText2,
-              );
-            }
-          ),
+          BlocBuilder<SelectFileBloc, File>(builder: (context, file) {
+            return Text(
+              basename(file.path) != ''
+                  ? basename(file.path)
+                  : 'No files selected',
+              style: Theme.of(context).textTheme.bodyText2,
+            );
+          }),
         ],
       ),
     );

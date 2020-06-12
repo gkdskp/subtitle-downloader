@@ -9,7 +9,7 @@ enum SelectFileEvent {
 
 class SelectFileBloc extends Bloc<SelectFileEvent, File> {
   @override
-  File get initialState => File(null);
+  File get initialState => File('');
 
   @override
   Stream<File> mapEventToState(SelectFileEvent event) async* {

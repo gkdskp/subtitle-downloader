@@ -4,9 +4,8 @@ import '../models/subtitles.dart';
 
 class SubtitleTile extends StatelessWidget {
   final Subtitle _subtitle;
-  final Function _handleClick;
 
-  SubtitleTile(this._subtitle, this._handleClick);
+  SubtitleTile(this._subtitle);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +22,7 @@ class SubtitleTile extends StatelessWidget {
       ),
       trailing: IconButton(
         icon: Icon(Icons.arrow_downward),
-        onPressed: () => _handleClick(_subtitle),
+        onPressed: () => null,
       ),
     );
   }
