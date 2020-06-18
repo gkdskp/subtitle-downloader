@@ -2,12 +2,16 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:subtitle_downloader/blocs/alert_bloc.dart';
 
 enum SelectFileEvent {
   select
 }
-
 class SelectFileBloc extends Bloc<SelectFileEvent, File> {
+  final Function _errorHandler;
+
+  SelectFileBloc(this._errorHandler);
+
   @override
   File get initialState => File('');
 
@@ -15,11 +19,15 @@ class SelectFileBloc extends Bloc<SelectFileEvent, File> {
   Stream<File> mapEventToState(SelectFileEvent event) async* {
     switch(event) {
       case SelectFileEvent.select:
-        yield await FilePicker.getFile();
+        File file = await FilePicker.getFile(type: FileType.video);
+        if(file == null)
+          yield File('');
+        else
+          yield file;
         break;
 
       default:
-        throw new Exception('Unknown event');
+        _errorHandler(NewAlert('Unknown error occured'));
     }
   }
 }

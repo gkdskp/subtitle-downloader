@@ -8,24 +8,25 @@ import '../models/subtitles.dart';
 import '../utils/sort_list.dart';
 import '../utils/hash.dart';
 
+
 class OpenSubtitlesService {
   static final _uaHeader = {'X-User-Agent': OpenSubUA};
   static const _subLang = 'eng';
   static const _apiPrefix =
       'https://rest.opensubtitles.org/search/sublanguageid-$_subLang';
 
-  static Future<Map<String, String>> _getFileHash([File file]) async => {
-        // 'hash': await OpenSubtitlesHasher.computeFileHash(file),
-        // 'size': (await file.length()).toString(),
-        'hash': '319b23c54e9cf314',
-        'size': '750005572'
+  static Future<Map<String, String>> _getFileHash(File file) async => {
+        'hash': await OpenSubtitlesHasher.computeFileHash(file),
+        'size': (await file.length()).toString(),
+        // 'hash': '319b23c54e9cf314',
+        // 'size': '750005572'
       };
 
   // Returns the list of URIs to fetch data
-  static Future<List<String>> _getApiUri([File file, String title]) async {
+  static Future<List<String>> _getApiUri(File file, [String title]) async {
     List<String> uris = [];
     try {
-      final fileHash = await _getFileHash();
+      final fileHash = await _getFileHash(file);
 
       uris.add('$_apiPrefix/moviebytesize-${fileHash['size']}/moviehash-${fileHash['hash']}/');
 
@@ -33,7 +34,7 @@ class OpenSubtitlesService {
         uris.add('$_apiPrefix/query-${Uri.encodeComponent(title)}');
   
     } catch (FileSystemException) {
-      throw new Exception('Hi');
+      throw new FormatException('Could not access file');
     }
 
     return uris;
@@ -44,8 +45,8 @@ class OpenSubtitlesService {
     List<Subtitle> subList = [];
     List<String> fetchedIDs = [];
 
-    for (String uri in (await _getApiUri(file, 'Shadowhunters S02E20'))) {
-      
+    for (String uri in (await _getApiUri(file, title))) {
+      print(uri);
       var response = await http.get(uri, headers: _uaHeader);
 
       if (response.statusCode == 200) {

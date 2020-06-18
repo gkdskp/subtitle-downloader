@@ -7,32 +7,32 @@ import 'package:subtitle_downloader/blocs/select_file.dart';
 class BrowseForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: 20),
-      child: Column(
-        children: [
-          Text(
-            'Select File',
-            style: Theme.of(context).textTheme.headline6,
-          ),
-          SizedBox(height: 10),
-          RaisedButton(
-            child: Text('Browse'),
-            padding: EdgeInsets.fromLTRB(50, 8, 50, 8),
-            onPressed: () => BlocProvider.of<SelectFileBloc>(context)
-                .add(SelectFileEvent.select),
-            color: Theme.of(context).accentColor,
-          ),
-          BlocBuilder<SelectFileBloc, File>(builder: (context, file) {
-            return Text(
-              basename(file.path) != ''
-                  ? basename(file.path)
-                  : 'No files selected',
-              style: Theme.of(context).textTheme.bodyText2,
-            );
-          }),
-        ],
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.only(top: 20),
+        child: Column(
+          children: [
+            Text(
+              'Select File',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            SizedBox(height: 15),
+            RaisedButton(
+              child: Text('Browse', style: Theme.of(context).textTheme.button,),
+              onPressed: () => BlocProvider.of<SelectFileBloc>(context)
+                  .add(SelectFileEvent.select),
+              color: Theme.of(context).accentColor,
+            ),
+            SizedBox(height: 5),
+            BlocBuilder<SelectFileBloc, File>(builder: (context, file) {
+              return Text(
+                basename(file.path),
+                style: Theme.of(context).textTheme.bodyText2,
+              );
+            }),
+          ],
+        ),
       ),
-    );
+    ); 
   }
 }

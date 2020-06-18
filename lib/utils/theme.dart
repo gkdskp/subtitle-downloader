@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-final ThemeData mainTheme = ThemeData(
+final primaryColor = Colors.blue[700];
+
+ThemeData mainTheme(context) => ThemeData(
   brightness: Brightness.dark,
   primaryColorBrightness: Brightness.dark,
-  primaryColor: Colors.yellow[900],
-  accentColor: Colors.orange[900],
-  textTheme: TextTheme(
-    headline1: TextStyle(
-      fontSize: 96,
-    ),
-  )
-);
+  primaryColor: primaryColor,
+  accentColor: Colors.blueAccent,
+  textTheme: GoogleFonts.openSansTextTheme(
+          ThemeData(
+            brightness: Brightness.dark,
+          ).textTheme,
+        ).copyWith(
+          headline6: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+          )
+        ),
+  );
+
 
