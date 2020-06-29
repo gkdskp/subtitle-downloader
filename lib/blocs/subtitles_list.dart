@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:subtitle_downloader/models/subtitles.dart';
 import 'package:subtitle_downloader/services/opensub.dart';
-
+import 'package:subtitle_downloader/utils/downloader.dart';
+import 'package:subtitle_downloader/utils/mxintent.dart';
 
 import 'alert_bloc.dart';
 
@@ -19,9 +21,11 @@ class SubtitlesFetch extends SubtitlesListEvent {
 }
 
 class SubtitleDownload extends SubtitlesListEvent {
-  final int index;
+  final Subtitle subtitle;
+  final File movieFile;
+  final Function subDownload;
 
-  SubtitleDownload(this.index);
+  SubtitleDownload(this.subtitle, this.movieFile, this.subDownload);
 }
 
 class SubtitlesListBloc extends Bloc<SubtitlesListEvent, Map<String, dynamic>> {
@@ -37,23 +41,28 @@ class SubtitlesListBloc extends Bloc<SubtitlesListEvent, Map<String, dynamic>> {
       SubtitlesListEvent event) async* {
     if (event is SubtitlesFetch) {
       try {
-        var subtitleList =
-            await OpenSubtitlesService.fetch(event.file, event.title);
-        if (subtitleList.length == 0)
-          _handleError(NewAlert('No subtitles found'));
         yield {
           'loadEnd': true,
-          'list': subtitleList,
+          'list': await OpenSubtitlesService.fetch(event.file, event.title),
+          'loadError': false
         };
-      } on FormatException catch (_) {
+      } catch (_) {
         yield {
-          'loadEnd': true,
+          'loadError': true,
+          'loadEnd': false,
           'list': [],
         };
+      }
+    } else if (event is SubtitleDownload) {
+      try {
+        _handleError(LoadingStart());
+        String subFile = await downloadSub(
+            movieFile: event.movieFile, subtitle: event.subtitle);
+        _handleError(LoadingEnd());
+        _handleError(OpenWithAlert(event.subDownload));
+      } catch (_) {
         _handleError(NewAlert(_.toString()));
       }
-    } else if(event is SubtitleDownload) {
-      
     }
   }
 }

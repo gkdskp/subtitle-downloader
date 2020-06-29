@@ -5,7 +5,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:subtitle_downloader/blocs/alert_bloc.dart';
 
 enum SelectFileEvent {
-  select
+  select,
+  remove
 }
 class SelectFileBloc extends Bloc<SelectFileEvent, File> {
   final Function _errorHandler;
@@ -24,6 +25,10 @@ class SelectFileBloc extends Bloc<SelectFileEvent, File> {
           yield File('');
         else
           yield file;
+        break;
+
+      case SelectFileEvent.remove:
+        yield File('');
         break;
 
       default:

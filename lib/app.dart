@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:subtitle_downloader/blocs/alert_bloc.dart';
 import 'blocs/select_file.dart';
 import 'pages/home.dart';
-import './utils/theme.dart';
+import './components/theme.dart';
 import './components/alert_dialog.dart';
 
 class App extends StatelessWidget {
@@ -19,13 +19,21 @@ class App extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        theme: mainTheme(context),
+        theme: mainTheme,
         home: BlocListener<AlertBloc, Map<String, dynamic>>(
           listener: (context, error) {
-            if (error['hasAlert']) {
-              showMyDialog(context, error['alertType'], error['alertMsg']);
-              BlocProvider.of<AlertBloc>(context).add(ResetAlert());
+            if(error['hasAlert'] && error['alertType'] == DialogType.OpenWithDialog) {
+              print('Action');
+              print(error['actions']);
+              showAlertDialog(context, error['alertType'], error['alertMsg'], actions: error['actions']);
             }
+            else if(!error['hasAlert'] && error['alertType'] == DialogType.Loading) {
+              Navigator.pop(context);
+            }
+
+            else if (error['hasAlert']) {
+              showAlertDialog(context, error['alertType'], error['alertMsg']);
+            } 
           },
           child: HomePage(),
         ),

@@ -6,6 +6,7 @@ import 'package:subtitle_downloader/blocs/alert_bloc.dart';
 import 'package:subtitle_downloader/blocs/select_file.dart';
 import 'package:subtitle_downloader/blocs/subtitles_list.dart';
 
+import '../constants.dart';
 import '../components/browse_file.dart';
 import '../components/search_form.dart';
 import './subtitles_page.dart';
@@ -20,12 +21,18 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Subtitle Downloader', style: Theme.of(context).textTheme.headline6,)),
+        title: Center(
+            child: Text(
+          AppTitle,
+          style: Theme.of(context).textTheme.headline6,
+        )),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 30,),
+            SizedBox(
+              height: 30,
+            ),
             BrowseForm(),
             BlocBuilder<SelectFileBloc, File>(
               builder: (context, state) {

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:subtitle_downloader/blocs/alert_bloc.dart';
+import 'package:subtitle_downloader/utils/mxintent.dart';
 
 import '../models/subtitles.dart';
 
 class SubtitleTile extends StatelessWidget {
   final Subtitle _subtitle;
+  final Function _handleDownload;
 
-  SubtitleTile(this._subtitle);
+  SubtitleTile(this._subtitle, this._handleDownload);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class SubtitleTile extends StatelessWidget {
       trailing: IconButton(
         icon: Icon(Icons.arrow_downward),
         onPressed: () {
-          BlocProvider.of<AlertBloc>(context).add(NewAlert('Cannot download'));
+          _handleDownload(_subtitle);
         },
       ),
     );

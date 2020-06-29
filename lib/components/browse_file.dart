@@ -17,22 +17,39 @@ class BrowseForm extends StatelessWidget {
               style: Theme.of(context).textTheme.headline6,
             ),
             SizedBox(height: 15),
-            RaisedButton(
-              child: Text('Browse', style: Theme.of(context).textTheme.button,),
-              onPressed: () => BlocProvider.of<SelectFileBloc>(context)
-                  .add(SelectFileEvent.select),
-              color: Theme.of(context).accentColor,
-            ),
-            SizedBox(height: 5),
             BlocBuilder<SelectFileBloc, File>(builder: (context, file) {
-              return Text(
-                basename(file.path),
-                style: Theme.of(context).textTheme.bodyText2,
-              );
+              return (file.path == '')
+                  ? RaisedButton.icon(
+                      icon: Icon(Icons.video_library),
+                      label: Text(
+                        'Browse',
+                      ),
+                      onPressed: () => BlocProvider.of<SelectFileBloc>(context)
+                          .add(SelectFileEvent.select),
+                      color: Theme.of(context).accentColor,
+                    )
+                  : Column(
+                      children: [
+                        RaisedButton.icon(
+                      icon: Icon(Icons.cancel),
+                      label: Text(
+                        'Remove',
+                      ),
+                      onPressed: () => BlocProvider.of<SelectFileBloc>(context)
+                          .add(SelectFileEvent.remove),
+                      color: Colors.red,
+                    ),
+                        SizedBox(height: 5),
+                        Text(
+                          basename(file.path),
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                      ],
+                    );
             }),
           ],
         ),
       ),
-    ); 
+    );
   }
 }

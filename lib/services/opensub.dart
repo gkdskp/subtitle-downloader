@@ -47,7 +47,10 @@ class OpenSubtitlesService {
 
     for (String uri in (await _getApiUri(file, title))) {
       print(uri);
-      var response = await http.get(uri, headers: _uaHeader);
+
+      try
+      {
+        var response = await http.get(uri, headers: _uaHeader);
 
       if (response.statusCode == 200) {
         (await jsonDecode(response.body) as List<dynamic>).forEach((subtitle) {
@@ -57,7 +60,10 @@ class OpenSubtitlesService {
           }
         });
       } else {
-        throw new FormatException('Failed to contact Opensubtitles.org');
+        throw new FormatException('Invalid response');
+      }
+      } catch(_) {
+        throw new Exception('Failed to contact Opensubtitles.org');
       }
     }
 

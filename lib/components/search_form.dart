@@ -21,7 +21,7 @@ class _SearchFormState extends State<SearchForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(20),
+      margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
       child: Form(
         key: _formKey,
         child: Column(
@@ -41,13 +41,15 @@ class _SearchFormState extends State<SearchForm> {
               TextFormField(
                 decoration: InputDecoration(
                   labelText: 'Title',
+                  hintText: 'Example: Breaking Bad S01E01',
                 ),
                 controller: _titleController,
               ),
             SizedBox(height: 30),
             BlocBuilder<SelectFileBloc, File>(builder: (context, file) {
-              return RaisedButton(
-                child: Text('Search for subtitles'),
+              return RaisedButton.icon(
+                icon: Icon(Icons.check),
+                label: Text('Search for subtitles'),
                 onPressed: () =>
                     widget._handleSubmit(file, _titleController.text),
                 color: Theme.of(context).accentColor,
