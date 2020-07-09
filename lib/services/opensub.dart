@@ -8,7 +8,6 @@ import '../models/subtitles.dart';
 import '../utils/sort_list.dart';
 import '../utils/hash.dart';
 
-
 class OpenSubtitlesService {
   static final _uaHeader = {'X-User-Agent': OpenSubUA};
   static const _subLang = 'eng';
@@ -28,11 +27,11 @@ class OpenSubtitlesService {
     try {
       final fileHash = await _getFileHash(file);
 
-      uris.add('$_apiPrefix/moviebytesize-${fileHash['size']}/moviehash-${fileHash['hash']}/');
+      uris.add(
+          '$_apiPrefix/moviebytesize-${fileHash['size']}/moviehash-${fileHash['hash']}/');
 
       if (title != null && title != '')
         uris.add('$_apiPrefix/query-${Uri.encodeComponent(title)}');
-  
     } catch (FileSystemException) {
       throw new FormatException('Could not access file');
     }
@@ -46,23 +45,22 @@ class OpenSubtitlesService {
     List<String> fetchedIDs = [];
 
     for (String uri in (await _getApiUri(file, title))) {
-      print(uri);
-
-      try
-      {
+      try {
+        print('Yzaay');
         var response = await http.get(uri, headers: _uaHeader);
 
-      if (response.statusCode == 200) {
-        (await jsonDecode(response.body) as List<dynamic>).forEach((subtitle) {
-          if (!fetchedIDs.contains(subtitle['IDSubtitleFile'])) {
-            fetchedIDs.add(subtitle['IDSubtitleFile']);
-            subList.add(Subtitle.fromAPI(subtitle));
-          }
-        });
-      } else {
-        throw new FormatException('Invalid response');
-      }
-      } catch(_) {
+        if (response.statusCode == 200) {
+          (await jsonDecode(response.body) as List<dynamic>)
+              .forEach((subtitle) {
+            if (!fetchedIDs.contains(subtitle['IDSubtitleFile'])) {
+              fetchedIDs.add(subtitle['IDSubtitleFile']);
+              subList.add(Subtitle.fromAPI(subtitle));
+            }
+          });
+        } else {
+          throw new FormatException('Invalid response');
+        }
+      } catch (_) {
         throw new Exception('Failed to contact Opensubtitles.org');
       }
     }

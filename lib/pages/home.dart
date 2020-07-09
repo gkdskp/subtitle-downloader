@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:subtitle_downloader/blocs/alert_bloc.dart';
 import 'package:subtitle_downloader/blocs/select_file.dart';
 import 'package:subtitle_downloader/blocs/subtitles_list.dart';
 
@@ -56,7 +55,7 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute(
         builder: (context) => BlocProvider<SubtitlesListBloc>(
           create: (context) =>
-              SubtitlesListBloc(BlocProvider.of<AlertBloc>(context).add),
+              SubtitlesListBloc(),
           child: SubtitlesPage(file, title),
         ),
       ),

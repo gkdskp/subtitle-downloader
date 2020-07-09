@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:subtitle_downloader/utils/mxintent.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:subtitle_downloader/blocs/subtitles_list.dart';
 import '../models/subtitles.dart';
 
 class SubtitleTile extends StatelessWidget {
@@ -17,16 +17,25 @@ class SubtitleTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text('${_subtitle.subRating} (${_subtitle.noOfVotes} votes)'),
-          if(_subtitle.fileMatch)
-              Text('File Match', style: TextStyle(color: Colors.greenAccent))
+          if (_subtitle.fileMatch)
+            Text('File Match', style: TextStyle(color: Colors.greenAccent))
         ],
       ),
-      trailing: IconButton(
-        icon: Icon(Icons.arrow_downward),
-        onPressed: () {
-          _handleDownload(_subtitle);
-        },
-      ),
+      trailing: BlocBuilder<SubtitlesListBloc, Map<String, dynamic>>(
+          builder: (context, snapshot) {
+        return IconButton(
+          icon: Icon(
+            Icons.arrow_downward,
+            color: (snapshot['downloaded'] != null &&
+                    snapshot['downloaded'] == _subtitle)
+                ? Colors.green
+                : Colors.white,
+          ),
+          onPressed: () {
+            _handleDownload(_subtitle);
+          },
+        );
+      }),
     );
   }
 }

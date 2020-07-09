@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:subtitle_downloader/blocs/alert_bloc.dart';
+import 'package:subtitle_downloader/components/alert_dialog.dart';
 import 'package:subtitle_downloader/models/subtitles.dart';
 import 'package:subtitle_downloader/utils/mxintent.dart';
 import '../blocs/subtitles_list.dart';
+import '../blocs/alert.dart';
 import '../components/subtitle_tile.dart';
 
 class SubtitlesPage extends StatefulWidget {
@@ -22,9 +23,10 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
   void initState() {
     super.initState();
 
+    BlocProvider.of<AlertBloc>(context)
+        .add(ShowAlertEvent(AlertBox.loadingMessage()));
     BlocProvider.of<SubtitlesListBloc>(context)
         .add(SubtitlesFetch(widget._movieFile, widget._title));
-    BlocProvider.of<AlertBloc>(context).add(LoadingStart());
   }
 
   @override
@@ -37,13 +39,11 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
           ),
           body: BlocListener<SubtitlesListBloc, Map<String, dynamic>>(
             listener: (context, result) {
-              if(result['loadEnd'])BlocProvider.of<AlertBloc>(context).add(LoadingEnd());
-              else if (result['loadEnd'] && result['list'].length == 0) {
-                BlocProvider.of<AlertBloc>(context)
-                    .add(NewAlert('No subtitles found'));
-              } else if (result['loadError']) {
-                BlocProvider.of<AlertBloc>(context)
-                    .add(NewAlert('Couldnt contact Opensubtitles.org'));
+              BlocProvider.of<AlertBloc>(context).add(HideAlertEvent());
+              if (result['downloaded'] != null) {
+                _handleDownloaded();
+              } else if (result['list'] == null || result['list'].length == 0) {
+                _handleError();
               }
             },
             child: ListView.separated(
@@ -62,13 +62,76 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
     );
   }
 
-  void _downloadSub(Subtitle subtitle) {
-    BlocProvider.of<SubtitlesListBloc>(context)
-        .add(SubtitleDownload(subtitle, widget._movieFile, openWithMx));
+  void _handleError() {
+    BlocProvider.of<AlertBloc>(context).add(
+      ShowAlertEvent(
+        AlertBox.actionsMessage(
+          'No Results',
+          'Try checking your internet connection or adding/editing your search term',
+          [
+            FlatButton(
+              onPressed: () => BlocProvider.of<AlertBloc>(context).add(
+                HideAlertEvent(),
+              ),
+              child: Text('OK'),
+            )
+          ],
+        ),
+      ),
+    );
   }
 
-  void openWithMx() {
-    print('zdvsddfsdHi');
-    openMXPlayer(widget._movieFile, '');
+  void _downloadSub(Subtitle subtitle) {
+    BlocProvider.of<AlertBloc>(context)
+        .add(ShowAlertEvent(AlertBox.loadingMessage()));
+
+    try {
+      BlocProvider.of<SubtitlesListBloc>(context)
+          .add(SubtitleDownload(subtitle, widget._movieFile));
+    } catch (_) {
+      BlocProvider.of<AlertBloc>(context).add(HideAlertEvent());
+
+      // Error handling
+      BlocProvider.of<AlertBloc>(context).add(
+        ShowAlertEvent(
+          AlertBox.actionsMessage(
+            'Cannot download',
+            'Somw error occured',
+            [
+              FlatButton(
+                onPressed: () => BlocProvider.of<AlertBloc>(context).add(
+                  HideAlertEvent(),
+                ),
+                child: Text('OK'),
+              )
+            ],
+          ),
+        ),
+      );
+    }
+  }
+
+  void _handleDownloaded() async {
+    BlocProvider.of<AlertBloc>(context).add(
+      ShowAlertEvent(
+        AlertBox.actionsMessage(
+          'Downloaded',
+          'Open the file in a media player to play',
+          [
+            FlatButton(
+              onPressed: () => BlocProvider.of<AlertBloc>(context).add(
+                HideAlertEvent(),
+              ),
+              child: Text('Dismiss'),
+            ),
+            if (await getMXVersion() != null)
+              FlatButton(
+                child: Text('Open in MX Player'),
+                onPressed: () => openMXPlayer(widget._movieFile),
+              )
+          ],
+        ),
+      ),
+    );
   }
 }

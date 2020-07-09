@@ -31,14 +31,15 @@ class BrowseForm extends StatelessWidget {
                   : Column(
                       children: [
                         RaisedButton.icon(
-                      icon: Icon(Icons.cancel),
-                      label: Text(
-                        'Remove',
-                      ),
-                      onPressed: () => BlocProvider.of<SelectFileBloc>(context)
-                          .add(SelectFileEvent.remove),
-                      color: Colors.red,
-                    ),
+                          icon: Icon(Icons.cancel),
+                          label: Text(
+                            'Remove',
+                          ),
+                          onPressed: () =>
+                              BlocProvider.of<SelectFileBloc>(context)
+                                  .add(SelectFileEvent.remove),
+                          color: Colors.red,
+                        ),
                         SizedBox(height: 5),
                         Text(
                           basename(file.path),

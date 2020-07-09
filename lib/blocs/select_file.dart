@@ -2,16 +2,14 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:subtitle_downloader/blocs/alert_bloc.dart';
 
 enum SelectFileEvent {
   select,
   remove
 }
 class SelectFileBloc extends Bloc<SelectFileEvent, File> {
-  final Function _errorHandler;
 
-  SelectFileBloc(this._errorHandler);
+  SelectFileBloc();
 
   @override
   File get initialState => File('');
@@ -32,7 +30,7 @@ class SelectFileBloc extends Bloc<SelectFileEvent, File> {
         break;
 
       default:
-        _errorHandler(NewAlert('Unknown error occured'));
+       // _errorHandler(NewAlert('Unknown error occured'));
     }
   }
 }
