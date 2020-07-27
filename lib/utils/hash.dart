@@ -138,7 +138,7 @@ class OpenSubtitlesHasher {
     a[7] += a[6] >> 8;
     a[6] = a[6] & b;
     a[7] = a[7] & b;
-    for (c; c > -1; c--) {
+    for (; c > -1; c--) {
         e += d[(a[c] >> 4 & 15)] + d[(a[c] & 15)];
     }
     return e;

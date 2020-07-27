@@ -1,132 +1,69 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:subtitle_downloader/blocs/select_file.dart';
 
 class SearchForm extends StatefulWidget {
-  final Function _handleSearch;
+  final Function _handleSubmit;
 
-  SearchForm(this._handleSearch);
+  SearchForm(this._handleSubmit);
 
   @override
   _SearchFormState createState() => _SearchFormState();
 }
 
 class _SearchFormState extends State<SearchForm> {
-  var isEpisode = false;
-
   final _titleController = TextEditingController();
-  final _seasonController = TextEditingController();
-  final _episodeController = TextEditingController();
-
+  var _hasSearchTerm = false;
   var _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(20),
+      margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
       child: Form(
         key: _formKey,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Details',
-              style: Theme.of(context).textTheme.headline6,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Enter your own search term'),
+                Checkbox(
+                  value: _hasSearchTerm,
+                  onChanged: (value) => _setVisible(value),
+                ),
+              ],
             ),
-            Text(
-              'Optional',
-              style: Theme.of(context).textTheme.caption,
-            ),
-            SizedBox(height: 10),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Movie'),
-                  Switch(
-                    value: isEpisode,
-                    onChanged: (bool value) {
-                      setState(() {
-                        isEpisode = value;
-                      });
-                    },
-                  ),
-                  Text('Series episode'),
-                ],
+            if (_hasSearchTerm)
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                  hintText: 'Example: Breaking Bad S01E01',
+                ),
+                controller: _titleController,
               ),
-            ),
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: 'Title',
-              ),
-              controller: _titleController,
-            ),
-            (isEpisode)
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: 100.0,
-                        child: TextFormField(
-                          controller: _seasonController,
-                          decoration: InputDecoration(
-                            labelText: 'Season',
-                            errorMaxLines: 5,
-                          ),
-                          validator: (value) {
-                            if (double.tryParse(value) == null) {
-                              return 'Enter season number';
-                            }
-                            return null;
-                          },
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(3),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 75.0,
-                        child: TextFormField(
-                          controller: _episodeController,
-                          decoration: InputDecoration(
-                            labelText: 'Episode',
-                            errorMaxLines: 5,
-                          ),
-                          validator: (value) {
-                            if (double.tryParse(value) == null) {
-                              return 'Enter Episode number';
-                            }
-                            return null;
-                          },
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(3),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-                : Container(
-                    width: 0,
-                    height: 0,
-                  ),
             SizedBox(height: 30),
-            RaisedButton(
-              child: Text('Search for subtitles'),
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  widget._handleSearch(
-                    title: _titleController.text,
-                    season:
-                        (isEpisode) ? int.parse(_seasonController.text) : null,
-                    episode:
-                        (isEpisode) ? int.parse(_episodeController.text) : null,
-                  );
-                }
-              },
-              color: Theme.of(context).accentColor,
-            ),
+            BlocBuilder<SelectFileBloc, File>(builder: (context, file) {
+              return RaisedButton.icon(
+                icon: Icon(Icons.check),
+                label: Text('Search for subtitles'),
+                onPressed: () =>
+                    widget._handleSubmit(file, _titleController.text),
+                color: Theme.of(context).accentColor,
+              );
+            }),
           ],
         ),
       ),
     );
+  }
+
+  void _setVisible(bool val) {
+    setState(() {
+      _hasSearchTerm = val;
+    });
   }
 }

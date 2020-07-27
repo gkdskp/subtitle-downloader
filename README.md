@@ -1,6 +1,8 @@
 # subtitle-downloader
 <p align="center">
-  <img height="450" src="./assets/ss.jpg">
+  <img height="450" src="./assets/ss.png">
+  <img height="450" src="./assets/ss2.png">
+  <img height="450" src="./assets/ss3.png">
 </p>
 A Flutter app to fetch subtitles from OpenSubtitles.org
 
@@ -10,7 +12,7 @@ A Flutter app to fetch subtitles from OpenSubtitles.org
 flutter pub get
 ```  
   
-2. Obtain an [OMDb API Key](http://www.omdbapi.com/apikey.aspx) and request an 
+2. Request an 
 [OpenSubtitles.org User Agent](https://trac.opensubtitles.org/projects/opensubtitles/wiki/DevReadFirst)  
   
 

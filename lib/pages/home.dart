@@ -1,13 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../components/browse_file.dart';
-import '../components/search_form.dart';
-
-import './subtitle_list.dart';
-import './movie_list.dart';
+import 'package:subtitle_downloader/blocs/select_file.dart';
+import 'package:subtitle_downloader/blocs/subtitles_list.dart';
+import 'package:subtitle_downloader/utils/launch_url.dart';
+import 'package:subtitle_downloader/constants.dart';
+import 'package:subtitle_downloader/components/browse_file.dart';
+import 'package:subtitle_downloader/components/search_form.dart';
+import 'package:subtitle_downloader/pages/subtitles_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -15,65 +17,56 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  File _selectedFile;
-  String id;
-
-  void _selectFile() async {
-    File file = await FilePicker.getFile();
-    setState(() {
-      _selectedFile = file;
-    });
-  }
-
-  void _setID(String id) {
-    this.id = id;
-    Navigator.pop(context);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SubtitlesPage(
-          file: _selectedFile,
-          imdbID: id,
-        ),
-      ),
-    );
-  }
-
-  void _search({String title, int season, int episode}) async {
-    if (title == null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SubtitlesPage(file: _selectedFile),
-        ),
-      );
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MovieList(
-              title: title,
-              season: season,
-              episode: episode,
-              handlePress: _setID),
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Subtitle Downloader'),
+        title: Center(
+            child: Text(
+          AppTitle,
+          style: Theme.of(context).textTheme.headline6,
+        )),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            BrowseForm(_selectedFile, _selectFile),
-            SizedBox(height: 30),
-            SearchForm(_search),
+            SizedBox(
+              height: 30,
+            ),
+            BrowseForm(),
+            BlocBuilder<SelectFileBloc, File>(
+              builder: (context, state) {
+                return Column(
+                  children: [
+                    SizedBox(height: 30),
+                    if (state.path != '') SearchForm(_loadSubtitlesPage)
+                  ],
+                );
+              },
+            )
           ],
+        ),
+      ),
+      persistentFooterButtons: [
+        FlatButton(
+          child: Text('Report an Issue'),
+          onPressed: () => launchURL(IssueReportLink),
+        ),
+        FlatButton(
+          child: Text('Subtitles by Opensubtitles.org'),
+          onPressed: () => launchURL('https://opensubtitles.org'),
+        )
+      ],
+    );
+  }
+
+  void _loadSubtitlesPage(File file, [String title]) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BlocProvider<SubtitlesListBloc>(
+          create: (context) => SubtitlesListBloc(),
+          child: SubtitlesPage(file, title),
         ),
       ),
     );
