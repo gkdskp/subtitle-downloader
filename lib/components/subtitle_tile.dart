@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:subtitle_downloader/models/subtitles.dart';
 import 'package:subtitle_downloader/blocs/subtitles_list.dart';
-import '../models/subtitles.dart';
 
 class SubtitleTile extends StatelessWidget {
   final Subtitle _subtitle;

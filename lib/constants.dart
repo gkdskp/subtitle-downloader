@@ -1,5 +1,5 @@
 const AppTitle = 'Subtitle Downloader';
+const IssueReportLink = 'https://github.com/gkdskp/subtitle-downloader/issues';
 
 // Secrets
-const OMDbApiKey = 'YOUR OMDb API KEY HERE';
-const OpenSubUA = 'YOUR OPENSUBTITLES.ORG UA HERE';
+const OpenSubUA = 'YOUR OpenSubtitles.org UA HERE';

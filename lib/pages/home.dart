@@ -2,13 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:subtitle_downloader/blocs/select_file.dart';
 import 'package:subtitle_downloader/blocs/subtitles_list.dart';
-
-import '../constants.dart';
-import '../components/browse_file.dart';
-import '../components/search_form.dart';
-import './subtitles_page.dart';
+import 'package:subtitle_downloader/utils/launch_url.dart';
+import 'package:subtitle_downloader/constants.dart';
+import 'package:subtitle_downloader/components/browse_file.dart';
+import 'package:subtitle_downloader/components/search_form.dart';
+import 'package:subtitle_downloader/pages/subtitles_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -46,6 +47,16 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+      persistentFooterButtons: [
+        FlatButton(
+          child: Text('Report an Issue'),
+          onPressed: () => launchURL(IssueReportLink),
+        ),
+        FlatButton(
+          child: Text('Subtitles by Opensubtitles.org'),
+          onPressed: () => launchURL('https://opensubtitles.org'),
+        )
+      ],
     );
   }
 
@@ -54,8 +65,7 @@ class _HomePageState extends State<HomePage> {
       context,
       MaterialPageRoute(
         builder: (context) => BlocProvider<SubtitlesListBloc>(
-          create: (context) =>
-              SubtitlesListBloc(),
+          create: (context) => SubtitlesListBloc(),
           child: SubtitlesPage(file, title),
         ),
       ),

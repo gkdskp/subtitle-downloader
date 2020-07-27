@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:android_intent/android_intent.dart';
 import 'package:device_apps/device_apps.dart';
 

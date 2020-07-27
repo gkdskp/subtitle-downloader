@@ -1,13 +1,13 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:subtitle_downloader/components/alert_dialog.dart';
+
 import 'package:subtitle_downloader/models/subtitles.dart';
+import 'package:subtitle_downloader/components/alert_dialog.dart';
+import 'package:subtitle_downloader/components/subtitle_tile.dart';
+import 'package:subtitle_downloader/blocs/subtitles_list.dart';
+import 'package:subtitle_downloader/blocs/alert.dart';
 import 'package:subtitle_downloader/utils/mxintent.dart';
-import '../blocs/subtitles_list.dart';
-import '../blocs/alert.dart';
-import '../components/subtitle_tile.dart';
 
 class SubtitlesPage extends StatefulWidget {
   final File _movieFile;
@@ -42,7 +42,7 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
               BlocProvider.of<AlertBloc>(context).add(HideAlertEvent());
               if (result['downloaded'] != null) {
                 _handleDownloaded();
-              } else if (result['list'] == null || result['list'].length == 0) {
+              } else if (result['loadError']) {
                 _handleError();
               }
             },
@@ -124,7 +124,7 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
               ),
               child: Text('Dismiss'),
             ),
-            if (await getMXVersion() != null)
+           // if (await getMXVersion() != null)
               FlatButton(
                 child: Text('Open in MX Player'),
                 onPressed: () => openMXPlayer(widget._movieFile),

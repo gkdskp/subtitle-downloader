@@ -1,4 +1,4 @@
-import '../models/subtitles.dart';
+import 'package:subtitle_downloader/models/subtitles.dart';
 
 void sortList(List<Subtitle> list) {
   list.sort((subA, subB) {

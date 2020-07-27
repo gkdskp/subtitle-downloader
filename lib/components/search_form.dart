@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:subtitle_downloader/blocs/select_file.dart';
 
 class SearchForm extends StatefulWidget {

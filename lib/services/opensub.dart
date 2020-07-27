@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:http/http.dart' as http;
 
-import '../constants.dart';
-import '../models/subtitles.dart';
-import '../utils/sort_list.dart';
-import '../utils/hash.dart';
+import 'package:subtitle_downloader/constants.dart';
+import 'package:subtitle_downloader/models/subtitles.dart';
+import 'package:subtitle_downloader/utils/sort_list.dart';
+import 'package:subtitle_downloader/utils/hash.dart';
 
 class OpenSubtitlesService {
   static final _uaHeader = {'X-User-Agent': OpenSubUA};
@@ -26,7 +25,6 @@ class OpenSubtitlesService {
     List<String> uris = [];
     try {
       final fileHash = await _getFileHash(file);
-
       uris.add(
           '$_apiPrefix/moviebytesize-${fileHash['size']}/moviehash-${fileHash['hash']}/');
 
@@ -46,7 +44,6 @@ class OpenSubtitlesService {
 
     for (String uri in (await _getApiUri(file, title))) {
       try {
-        print('Yzaay');
         var response = await http.get(uri, headers: _uaHeader);
 
         if (response.statusCode == 200) {
